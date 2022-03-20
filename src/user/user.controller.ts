@@ -1,7 +1,9 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Put } from '@nestjs/common';
+import { compareSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import HttpException from 'src/utils/Exception';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { DeleteUserDTO } from './dto/delete-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
@@ -48,5 +50,24 @@ export class UserController {
     const userUpdated = await this.userService.update(credentials.id, { name });
 
     return { userUpdated };
+  }
+
+  @Delete()
+  async delete(@Body() { password, credentials }: DeleteUserDTO) {
+    if (!password) {
+      throw new HttpException({ status: 'error.invalidParameters' });
+    }
+
+    const user = await this.userService.findByEmail(credentials.email);
+
+    if (!user) {
+      throw new HttpException({ status: 'error.userNotFound' });
+    }
+
+    if (!compareSync(password, user.password)) {
+      throw new HttpException({ status: 'error.invalidPassword' });
+    }
+
+    await this.userService.delete(user.id);
   }
 }

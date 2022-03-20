@@ -4,6 +4,7 @@ type Status =
   | 'error.invalidParameters'
   | 'error.userAlreadyExists'
   | 'error.userNotFound'
+  | 'error.invalidPassword'
   | 'error.internalServerError';
 
 interface IResponse {

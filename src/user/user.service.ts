@@ -65,4 +65,10 @@ export class UserService {
       },
     });
   }
+
+  async delete(id: string) {
+    return client.user.delete({
+      where: { id },
+    });
+  }
 }
