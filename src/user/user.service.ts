@@ -5,6 +5,7 @@ import HttpException from 'src/utils/Exception';
 import regex from 'src/utils/regex';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { isValidObjectId } from 'mongoose';
 
 const client = new PrismaClient();
 
@@ -14,6 +15,25 @@ export class UserService {
     return client.user.findUnique({
       where: {
         email,
+      },
+    });
+  }
+
+  async findById(id: string) {
+    if (!isValidObjectId(id)) {
+      throw new HttpException({
+        status: 'error.invalidParameters',
+        message: 'The id entered is invalid',
+      });
+    }
+
+    return client.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
       },
     });
   }

@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { compareSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import HttpException from 'src/utils/Exception';
@@ -10,6 +18,17 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get(':id')
+  async get(@Param() params) {
+    const user = await this.userService.findById(params.id);
+
+    if (!user) {
+      throw new HttpException({ status: 'error.userNotFound' });
+    }
+
+    return user;
+  }
 
   @Post('create')
   async create(@Body() { name, email, password }: CreateUserDTO) {
