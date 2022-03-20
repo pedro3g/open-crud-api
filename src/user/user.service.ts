@@ -4,6 +4,7 @@ import { hashSync } from 'bcrypt';
 import HttpException from 'src/utils/Exception';
 import regex from 'src/utils/regex';
 import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 const client = new PrismaClient();
 
@@ -40,6 +41,21 @@ export class UserService {
         name,
         email,
         password: hashSync(password, 10),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
+      },
+    });
+  }
+
+  async update(id: string, { name }: Omit<UpdateUserDTO, 'credentials'>) {
+    return client.user.update({
+      where: { id },
+      data: {
+        name,
       },
       select: {
         id: true,

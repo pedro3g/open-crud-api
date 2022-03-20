@@ -3,6 +3,7 @@ import { HttpException as NestHttpException } from '@nestjs/common';
 type Status =
   | 'error.invalidParameters'
   | 'error.userAlreadyExists'
+  | 'error.userNotFound'
   | 'error.internalServerError';
 
 interface IResponse {
